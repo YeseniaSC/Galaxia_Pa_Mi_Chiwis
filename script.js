@@ -318,3 +318,7 @@ document.getElementById("start").onclick = function () {
     document.getElementById("music").play();
     document.getElementById("message").style.opacity = 1;
 };
+
+
+
+
