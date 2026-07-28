@@ -1,193 +1,285 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.165/build/three.module.js';
+const canvas=document.getElementById("space");
+const ctx=canvas.getContext("2d");
 
-const scene=new THREE.Scene();
+let w,h;
 
-const camera=new THREE.PerspectiveCamera(
-75,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-);
+function resize(){
 
-camera.position.z=45;
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
 
-const renderer=new THREE.WebGLRenderer({
-antialias:true
+}
+
+resize();
+
+window.addEventListener("resize",resize);
+
+
+// ----------------------------
+// ESTRELLAS
+// ----------------------------
+
+let stars=[];
+
+
+for(let i=0;i<1800;i++){
+
+stars.push({
+
+x:Math.random()*w,
+y:Math.random()*h,
+
+size:Math.random()*2,
+
+alpha:Math.random(),
+
+speed:Math.random()*0.02
+
 });
 
-renderer.setSize(
-window.innerWidth,
-window.innerHeight
+}
+
+
+
+// ----------------------------
+// NEBULOSA
+// ----------------------------
+
+let nebula={
+    x:w/2,
+    y:h/2,
+    r:300
+};
+
+
+
+// ----------------------------
+// ESTRELLA FUGAZ
+// ----------------------------
+
+let shooting=null;
+
+
+
+function createShooting(){
+
+shooting={
+
+x:-200,
+
+y:Math.random()*h/2,
+
+speed:12,
+
+trail:[]
+
+};
+
+}
+
+
+
+function draw(){
+
+
+ctx.clearRect(0,0,w,h);
+
+
+// fondo
+
+let gradient=ctx.createRadialGradient(
+w/2,
+h/2,
+0,
+w/2,
+h/2,
+w
 );
 
-document.body.appendChild(renderer.domElement);
 
-//////////////////////////////
+gradient.addColorStop(0,"#24104f");
+gradient.addColorStop(.5,"#090018");
+gradient.addColorStop(1,"black");
+
+
+ctx.fillStyle=gradient;
+
+ctx.fillRect(0,0,w,h);
+
+
+
+// nebulosa
+
+let neb=ctx.createRadialGradient(
+w/2,
+h/2,
+20,
+w/2,
+h/2,
+400
+);
+
+
+neb.addColorStop(0,"rgba(255,100,220,.25)");
+neb.addColorStop(.5,"rgba(80,120,255,.12)");
+neb.addColorStop(1,"transparent");
+
+
+ctx.fillStyle=neb;
+
+ctx.fillRect(0,0,w,h);
+
+
+
 
 // estrellas
 
-const starsGeometry=new THREE.BufferGeometry();
+stars.forEach(s=>{
 
-const stars=[];
 
-for(let i=0;i<9000;i++){
+s.alpha+=s.speed;
 
-stars.push(
 
-(Math.random()-0.5)*300,
-(Math.random()-0.5)*300,
-(Math.random()-0.5)*300
+let glow=(Math.sin(s.alpha)+1)/2;
 
+
+ctx.fillStyle=
+`rgba(255,255,255,${glow})`;
+
+
+ctx.beginPath();
+
+ctx.arc(
+s.x,
+s.y,
+s.size,
+0,
+Math.PI*2
 );
 
-}
+ctx.fill();
 
-starsGeometry.setAttribute(
-'position',
-new THREE.Float32BufferAttribute(stars,3)
-);
 
-const starsMaterial=new THREE.PointsMaterial({
-
-color:0xffffff,
-size:0.4
 
 });
 
-const starField=new THREE.Points(
-starsGeometry,
-starsMaterial
-);
 
-scene.add(starField);
-
-//////////////////////////////
-
-// galaxia
-
-const galaxyGeometry=new THREE.BufferGeometry();
-
-const galaxy=[];
-
-for(let i=0;i<25000;i++){
-
-const radius=Math.random()*25;
-
-const angle=radius*2;
-
-galaxy.push(
-
-Math.cos(angle)*radius+(Math.random()-0.5),
-
-(Math.random()-0.5)*2,
-
-Math.sin(angle)*radius+(Math.random()-0.5)
-
-);
-
-}
-
-galaxyGeometry.setAttribute(
-
-'position',
-
-new THREE.Float32BufferAttribute(galaxy,3)
-
-);
-
-const galaxyMaterial=new THREE.PointsMaterial({
-
-color:0xaa88ff,
-size:0.15
-
-});
-
-const galaxy=new THREE.Points(
-galaxyGeometry,
-galaxyMaterial
-);
-
-scene.add(galaxy);
-
-//////////////////////////////
 
 // estrella fugaz
 
-const shootingGeometry=new THREE.SphereGeometry(.25,16,16);
+if(shooting){
 
-const shootingMaterial=new THREE.MeshBasicMaterial({
 
-color:0xffffff
-
+shooting.trail.push({
+x:shooting.x,
+y:shooting.y
 });
 
-const shooting=new THREE.Mesh(
-shootingGeometry,
-shootingMaterial
+
+if(shooting.trail.length>30)
+shooting.trail.shift();
+
+
+
+for(let i=0;i<shooting.trail.length;i++){
+
+let p=shooting.trail[i];
+
+
+ctx.fillStyle=
+`rgba(255,255,255,${i/40})`;
+
+
+ctx.beginPath();
+
+ctx.arc(
+p.x,
+p.y,
+3,
+0,
+Math.PI*2
 );
 
-scene.add(shooting);
+ctx.fill();
 
-shooting.position.set(-60,25,-5);
+}
 
-//////////////////////////////
+
+ctx.fillStyle="white";
+
+ctx.beginPath();
+
+ctx.arc(
+shooting.x,
+shooting.y,
+5,
+0,
+Math.PI*2
+);
+
+ctx.fill();
+
+
+
+shooting.x+=shooting.speed;
+shooting.y+=shooting.speed*.3;
+
+
+
+if(shooting.x>w+200){
+
+shooting=null;
+
+}
+
+}
+
+
+requestAnimationFrame(draw);
+
+}
+
+
+draw();
+
+
+
+// ----------------------------
+// INICIO
+// ----------------------------
+
 
 let started=false;
 
-document.getElementById("overlay").onclick=()=>{
+
+document.getElementById("start").onclick=function(){
+
 
 started=true;
 
-document.getElementById("overlay").style.display="none";
+
+this.style.display="none";
+
 
 document.getElementById("music").play();
 
-}
 
-//////////////////////////////
 
-let timer=0;
+setInterval(()=>{
 
-function animate(){
+createShooting();
 
-requestAnimationFrame(animate);
+},4000);
 
-galaxy.rotation.y+=0.0008;
 
-starField.rotation.y+=0.00015;
 
-if(started){
+setTimeout(()=>{
 
-timer++;
+document.getElementById("message").style.opacity=1;
 
-if(timer>250){
 
-shooting.position.x+=.5;
+},8000);
 
-shooting.position.y-=.18;
 
-}
 
-if(timer>520){
-
-document.getElementById("mensaje").style.opacity=1;
-
-}
-
-}
-
-renderer.render(scene,camera);
-
-}
-
-animate();
-
-window.addEventListener("resize",()=>{
-
-camera.aspect=window.innerWidth/window.innerHeight;
-
-camera.updateProjectionMatrix();
-
-renderer.setSize(window.innerWidth,window.innerHeight);
-
-});
+};
