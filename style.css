@@ -45,34 +45,26 @@ z-index:5;
 
 
 #message{
-
 position:absolute;
-
-top:45%;
+top:40%;
 width:100%;
-
+max-width:800px;
+left:50%;
+transform:translateX(-50%);
 text-align:center;
-
 font-family:Georgia,serif;
-
-font-size:clamp(35px,6vw,95px);
-
+font-size:clamp(18px,2.5vw,28px);
+line-height:1.6;
 color:white;
-
 opacity:0;
-
-letter-spacing:3px;
-
+letter-spacing:1px;
 text-shadow:
 0 0 10px white,
 0 0 25px #d8a4ff,
 0 0 50px #ff8ee8,
 0 0 90px #8c7bff;
-
 transition:3s;
-
 animation:pulse 3s infinite alternate;
-
 }
 
 
