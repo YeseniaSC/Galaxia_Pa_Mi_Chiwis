@@ -8,7 +8,7 @@ function resize() {
     h = canvas.height = document.documentElement.clientHeight;
 }
 
-resize();
+resize(); 
 window.addEventListener("resize", resize);
 window.addEventListener("orientationchange", resize);
 if (window.visualViewport) {
