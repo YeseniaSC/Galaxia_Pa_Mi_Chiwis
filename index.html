@@ -1,29 +1,35 @@
-<select value="@filterProyecto2" @onchange="OnProyecto2Changed">
-    <option value="">Todos</option>
-    @foreach (var p in proyectos
-        .Union(string.IsNullOrEmpty(filterProyecto2) ? Array.Empty<string>() : new[]{filterProyecto2})
-        .Distinct().OrderBy(x => x))
-    {
-        <option value="@p">@p</option>
-    }
-</select>
+<!DOCTYPE html>
+<html lang="es">
+<head>
 
-<select value="@filterEnsamble2" @onchange="OnEnsamble2Changed">
-    <option value="">Todos</option>
-    @foreach (var e in ensambles
-        .Union(string.IsNullOrEmpty(filterEnsamble2) ? Array.Empty<string>() : new[]{filterEnsamble2})
-        .Distinct().OrderBy(x => x))
-    {
-        <option value="@e">@e</option>
-    }
-</select>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<select value="@filterLote2" @onchange="OnLote2Changed">
-    <option value="">Todos</option>
-    @foreach (var l in lotes
-        .Union(string.IsNullOrEmpty(filterLote2) ? Array.Empty<string>() : new[]{filterLote2})
-        .Distinct().OrderBy(x => x))
-    {
-        <option value="@l">@l</option>
-    }
-</select>
+<title>Mi Universo</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div id="overlay">
+
+    <h1>✨ Haz clic para comenzar ✨</h1>
+
+</div>
+
+<audio id="music" loop>
+    <source src="music/cancion.mp3" type="audio/mpeg">
+</audio>
+
+<div id="mensaje">
+
+    Te quiero mucho ❤️
+
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
