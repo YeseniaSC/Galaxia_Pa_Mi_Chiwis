@@ -1,0 +1,29 @@
+<select value="@filterProyecto2" @onchange="OnProyecto2Changed">
+    <option value="">Todos</option>
+    @foreach (var p in proyectos
+        .Union(string.IsNullOrEmpty(filterProyecto2) ? Array.Empty<string>() : new[]{filterProyecto2})
+        .Distinct().OrderBy(x => x))
+    {
+        <option value="@p">@p</option>
+    }
+</select>
+
+<select value="@filterEnsamble2" @onchange="OnEnsamble2Changed">
+    <option value="">Todos</option>
+    @foreach (var e in ensambles
+        .Union(string.IsNullOrEmpty(filterEnsamble2) ? Array.Empty<string>() : new[]{filterEnsamble2})
+        .Distinct().OrderBy(x => x))
+    {
+        <option value="@e">@e</option>
+    }
+</select>
+
+<select value="@filterLote2" @onchange="OnLote2Changed">
+    <option value="">Todos</option>
+    @foreach (var l in lotes
+        .Union(string.IsNullOrEmpty(filterLote2) ? Array.Empty<string>() : new[]{filterLote2})
+        .Distinct().OrderBy(x => x))
+    {
+        <option value="@l">@l</option>
+    }
+</select>
