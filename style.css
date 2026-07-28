@@ -50,27 +50,29 @@ z-index:5;
 
 #message{
 position:absolute;
-bottom:8%;
+bottom:4%;
 left:50%;
 transform:translateX(-50%);
-width:90%;
+width:88%;
 max-width:800px;
 text-align:center;
 font-family:Georgia,serif;
-font-size:22px;
-line-height:1.6;
+font-size:20px;
+line-height:1.7;
 color:white;
 opacity:0;
 letter-spacing:1px;
+padding:20px 15px;
+background:rgba(0,0,0,0.35);
+border-radius:20px;
+backdrop-filter:blur(2px);
 text-shadow:
 0 0 10px white,
 0 0 25px #d8a4ff,
-0 0 50px #ff8ee8,
-0 0 90px #8c7bff;
+0 0 50px #ff8ee8;
 transition:3s;
 animation:pulse 3s infinite alternate;
 }
-
 
 @keyframes pulse{
 
