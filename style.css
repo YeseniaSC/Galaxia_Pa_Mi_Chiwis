@@ -46,14 +46,14 @@ z-index:5;
 
 #message{
 position:absolute;
-top:40%;
-width:100%;
-max-width:800px;
+bottom:8%;
 left:50%;
 transform:translateX(-50%);
+width:90%;
+max-width:800px;
 text-align:center;
 font-family:Georgia,serif;
-font-size: 12px;
+font-size:22px;
 line-height:1.6;
 color:white;
 opacity:0;
