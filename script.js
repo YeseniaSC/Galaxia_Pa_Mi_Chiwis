@@ -1,134 +1,286 @@
-const canvas=document.getElementById("space");
-const ctx=canvas.getContext("2d");
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
 
-let w,h;
+let w, h;
 
-function resize(){
-
-w=canvas.width=window.innerWidth;
-h=canvas.height=window.innerHeight;
-
+function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
 }
 
 resize();
-
-window.addEventListener("resize",resize);
-
-
-// ----------------------------
-// ESTRELLAS
-// ----------------------------
-
-let stars=[];
+window.addEventListener("resize", resize);
 
 
-for(let i=0;i<1800;i++){
+// ==========================
+// ESTRELLAS DE FONDO
+// ==========================
 
-stars.push({
+const stars = [];
 
-x:Math.random()*w,
-y:Math.random()*h,
+for (let i = 0; i < 2500; i++) {
 
-size:Math.random()*2,
-
-alpha:Math.random(),
-
-speed:Math.random()*0.02
-
-});
+    stars.push({
+        x: Math.random() * 4000 - 2000,
+        y: Math.random() * 4000 - 2000,
+        z: Math.random() * 2 + 0.2,
+        size: Math.random() * 2,
+        alpha: Math.random()
+    });
 
 }
 
 
+// ==========================
+// GALAXIAS ESPIRALES
+// ==========================
 
-// ----------------------------
-// NEBULOSA
-// ----------------------------
+class Galaxy {
 
-let nebula={
-    x:w/2,
-    y:h/2,
-    r:300
-};
+    constructor(x,y,size,color){
 
+        this.x=x;
+        this.y=y;
+        this.size=size;
+        this.color=color;
 
+        this.rotation=Math.random()*Math.PI*2;
 
-// ----------------------------
-// ESTRELLA FUGAZ
-// ----------------------------
+        this.speed=(Math.random()*0.001)+0.0005;
 
-let shooting=null;
+        this.particles=[];
 
 
+        for(let i=0;i<1800;i++){
 
-function createShooting(){
+            let radius=Math.random()*size;
 
-shooting={
+            let angle=
+            radius*0.04+
+            Math.random()*0.8;
+
+
+            this.particles.push({
+
+                angle:angle,
+                radius:radius,
+
+                offset:(Math.random()-0.5)*40,
+
+                size:Math.random()*2
+
+            });
+
+        }
+
+    }
+
+
+    draw(){
+
+        this.rotation+=this.speed;
+
+
+        this.particles.forEach(p=>{
+
+
+            let spiral=
+            p.angle+
+            this.rotation+
+            p.radius*0.002;
+
+
+            let px =
+            this.x+
+            Math.cos(spiral)*
+            (p.radius+p.offset);
+
+
+            let py =
+            this.y+
+            Math.sin(spiral)*
+            (p.radius+p.offset);
+
+
+            let gradient =
+            ctx.createRadialGradient(
+                px,
+                py,
+                0,
+                px,
+                py,
+                15
+            );
+
+
+            gradient.addColorStop(
+                0,
+                this.color
+            );
+
+            gradient.addColorStop(
+                1,
+                "transparent"
+            );
+
+
+            ctx.fillStyle=gradient;
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                px,
+                py,
+                p.size,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+
+        });
+
+    }
+
+}
+
+
+const galaxies=[
+
+new Galaxy(
+    window.innerWidth/2,
+    window.innerHeight/2,
+    260,
+    "rgba(210,130,255,.8)"
+),
+
+
+new Galaxy(
+    200,
+    250,
+    120,
+    "rgba(80,170,255,.7)"
+),
+
+
+new Galaxy(
+    w-250,
+    h-200,
+    150,
+    "rgba(255,120,220,.7)"
+)
+
+];
+
+
+
+// ==========================
+// ESTRELLAS FUGACES
+// ==========================
+
+let shootingStars=[];
+
+
+function createShootingStar(){
+
+
+shootingStars.push({
 
 x:-200,
 
-y:Math.random()*h/2,
+y:Math.random()*h,
 
-speed:12,
+speed:
+Math.random()*10+8,
 
-trail:[]
+length:
+Math.random()*80+50,
 
-};
+size:
+Math.random()*3+2
+
+});
+
 
 }
 
 
 
-function draw(){
+setInterval(()=>{
+
+createShootingStar();
+
+},1500);
 
 
-ctx.clearRect(0,0,w,h);
+
+// ==========================
+// ANIMACION
+// ==========================
+
+let time=0;
 
 
-// fondo
+function animate(){
 
-let gradient=ctx.createRadialGradient(
-w/2,
-h/2,
+
+requestAnimationFrame(animate);
+
+
+time+=0.01;
+
+
+
+ctx.fillStyle="black";
+
+ctx.fillRect(
 0,
-w/2,
-h/2,
-w
+0,
+w,
+h
 );
-
-
-gradient.addColorStop(0,"#24104f");
-gradient.addColorStop(.5,"#090018");
-gradient.addColorStop(1,"black");
-
-
-ctx.fillStyle=gradient;
-
-ctx.fillRect(0,0,w,h);
 
 
 
 // nebulosa
 
-let neb=ctx.createRadialGradient(
+let nebula =
+ctx.createRadialGradient(
 w/2,
 h/2,
-20,
+50,
 w/2,
 h/2,
-400
+600
 );
 
 
-neb.addColorStop(0,"rgba(255,100,220,.25)");
-neb.addColorStop(.5,"rgba(80,120,255,.12)");
-neb.addColorStop(1,"transparent");
+nebula.addColorStop(
+0,
+"rgba(120,50,220,.25)"
+);
+
+nebula.addColorStop(
+0.5,
+"rgba(40,100,255,.12)"
+);
+
+nebula.addColorStop(
+1,
+"transparent"
+);
 
 
-ctx.fillStyle=neb;
+ctx.fillStyle=nebula;
 
-ctx.fillRect(0,0,w,h);
-
+ctx.fillRect(
+0,
+0,
+w,
+h
+);
 
 
 
@@ -137,21 +289,19 @@ ctx.fillRect(0,0,w,h);
 stars.forEach(s=>{
 
 
-s.alpha+=s.speed;
-
-
-let glow=(Math.sin(s.alpha)+1)/2;
+let twinkle =
+(Math.sin(time+s.alpha)+1)/2;
 
 
 ctx.fillStyle=
-`rgba(255,255,255,${glow})`;
+`rgba(255,255,255,${twinkle})`;
 
 
 ctx.beginPath();
 
 ctx.arc(
-s.x,
-s.y,
+(w/2)+(s.x*s.z),
+(h/2)+(s.y*s.z),
 s.size,
 0,
 Math.PI*2
@@ -160,102 +310,96 @@ Math.PI*2
 ctx.fill();
 
 
+});
+
+
+
+// galaxias
+
+galaxies.forEach(g=>{
+
+g.draw();
 
 });
 
 
 
-// estrella fugaz
+// estrellas fugaces
 
-if(shooting){
+shootingStars.forEach((s,index)=>{
 
 
-shooting.trail.push({
-x:shooting.x,
-y:shooting.y
+let gradient =
+ctx.createLinearGradient(
+s.x,
+s.y,
+s.x-s.length,
+s.y-s.length*.3
+);
+
+
+gradient.addColorStop(
+0,
+"rgba(255,255,255,1)"
+);
+
+gradient.addColorStop(
+1,
+"transparent"
+);
+
+
+ctx.strokeStyle=gradient;
+
+ctx.lineWidth=s.size;
+
+
+ctx.beginPath();
+
+ctx.moveTo(
+s.x,
+s.y
+);
+
+
+ctx.lineTo(
+s.x-s.length,
+s.y-s.length*.3
+);
+
+
+ctx.stroke();
+
+
+
+s.x+=s.speed;
+
+s.y+=s.speed*.25;
+
+
+
+if(s.x>w+300){
+
+shootingStars.splice(index,1);
+
+}
+
+
 });
 
-
-if(shooting.trail.length>30)
-shooting.trail.shift();
-
-
-
-for(let i=0;i<shooting.trail.length;i++){
-
-let p=shooting.trail[i];
-
-
-ctx.fillStyle=
-`rgba(255,255,255,${i/40})`;
-
-
-ctx.beginPath();
-
-ctx.arc(
-p.x,
-p.y,
-3,
-0,
-Math.PI*2
-);
-
-ctx.fill();
-
 }
 
 
-ctx.fillStyle="white";
-
-ctx.beginPath();
-
-ctx.arc(
-shooting.x,
-shooting.y,
-5,
-0,
-Math.PI*2
-);
-
-ctx.fill();
+animate();
 
 
 
-shooting.x+=shooting.speed;
-shooting.y+=shooting.speed*.3;
-
-
-
-if(shooting.x>w+200){
-
-shooting=null;
-
-}
-
-}
-
-
-requestAnimationFrame(draw);
-
-}
-
-
-draw();
-
-
-
-// ----------------------------
-// INICIO
-// ----------------------------
-
-
-let started=false;
+// ==========================
+// INICIO + MUSICA
+// ==========================
 
 
 document.getElementById("start").onclick=function(){
-
-
-started=true;
 
 
 this.style.display="none";
@@ -264,22 +408,7 @@ this.style.display="none";
 document.getElementById("music").play();
 
 
-
-setInterval(()=>{
-
-createShooting();
-
-},4000);
-
-
-
-setTimeout(()=>{
-
 document.getElementById("message").style.opacity=1;
-
-
-},8000);
-
 
 
 };
