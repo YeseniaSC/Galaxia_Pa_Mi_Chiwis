@@ -4,13 +4,16 @@ const ctx = canvas.getContext("2d");
 let w, h;
 
 function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+    w = canvas.width = document.documentElement.clientWidth;
+    h = canvas.height = document.documentElement.clientHeight;
 }
 
 resize();
 window.addEventListener("resize", resize);
-
+window.addEventListener("orientationchange", resize);
+if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", resize);
+}
 
 // ==========================
 // ESTRELLAS DE FONDO (capa lejana, fija)
