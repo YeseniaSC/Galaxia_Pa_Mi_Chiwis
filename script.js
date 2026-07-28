@@ -407,9 +407,6 @@ this.style.display="none";
 
 document.getElementById("music").play();
 
-setTimeout(()=>{
 document.getElementById("message").style.opacity=1;
-},3500);
-
 
 };
